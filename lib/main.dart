@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/welcome_screen.dart';
+import 'screens/home_screen.dart';
 
 void main() {
   runApp(const TeXApp());
@@ -20,7 +20,7 @@ class TeXApp extends StatelessWidget {
         fontFamily: 'SFPro',
       ),
       routes: {
-        '/welcome': (context) => const WelcomeScreen(),
+        '/welcome': (context) => const HomeScreen(),
       },
       initialRoute: '/welcome',
     );
