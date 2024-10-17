@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tex/app/data/service/user_service.dart';
 import 'package:tex/screens/introduce_screen.dart';
-import 'screens.dart';
+import 'package:uuid/uuid.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -17,10 +18,18 @@ class _RegistrationForm extends State<RegisterScreen> {
   String? password;
   String? passwordConf;
   int? statusCode;
+  String? userId;
 
   Future<void> addUser() async {
+    const uuid = Uuid();
     final userService = UserService();
-    statusCode = await userService.createUser(username, email, password);
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      const uuid = Uuid();
+      userId = uuid.v6();
+    });
+    await prefs.setString('userId', userId!.toString());
+    statusCode = await userService.createUser(userId, username, email, password);
   }
 
   @override
@@ -122,7 +131,6 @@ class _RegistrationForm extends State<RegisterScreen> {
                                           .showSnackBar(snackBar);
                                     } else {
                                       addUser();
-                                      debugPrint(statusCode.toString());
                                       if (statusCode == 202) {
                                         Navigator.push(
                                           context,
@@ -132,7 +140,7 @@ class _RegistrationForm extends State<RegisterScreen> {
                                         );
                                       } else {
                                         const snackBar = SnackBar(
-                                          content: Text("An error has occrued. Please try again",
+                                          content: Text("An error has occurred. Please try again",
                                               style: TextStyle(
                                                   color: Colors.red,
                                                   fontWeight: FontWeight.bold)),

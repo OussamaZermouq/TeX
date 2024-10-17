@@ -1,7 +1,13 @@
+
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:image_input/image_input.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tex/app/data/service/profile_serivce.dart';
 import 'package:tex/screens/home_screen.dart';
+import 'package:http/http.dart' as http;
 
 class IntroductionScreen extends StatefulWidget {
   const IntroductionScreen({super.key});
@@ -13,7 +19,34 @@ class IntroductionScreen extends StatefulWidget {
 class _IntroductionScreen extends State<IntroductionScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   XFile? profileAvatarCurrentImage;
-  
+  String? imageUrl;
+
+
+  Future<void> uploadImage(XFile imageFile) async{
+    final url = Uri.parse("https://api.cloudinary.com/v1_1/dlnxxztxa/image/upload");
+    final request = http.MultipartRequest('POST', url)
+        ..fields['upload_preset'] = 'teX_UserImage'
+        ..files.add(await http.MultipartFile.fromPath('file', profileAvatarCurrentImage!.path));
+    final response = await request.send();
+    if (response.statusCode == 200){
+      final responseData = await response.stream.toBytes();
+      final responseString = String.fromCharCodes(responseData);
+      final jsonMap = jsonDecode(responseString);
+      setState(() {
+        final url = jsonMap['url'];
+        imageUrl = url;
+      });
+    }
+  }
+  int? statusCode;
+  Future<void> addProfile() async {
+    final profileService = ProfileSerivce();
+    final prefs = await SharedPreferences.getInstance();
+    int? _statusCode = await profileService.createProfile(firstName,lastName, age, bio, imageUrl, prefs.getString('userId'));
+    setState(() {
+      statusCode =_statusCode;
+    });
+  }
   var getImageSource = (BuildContext context) {
     return showDialog<ImageSource>(
       context: context,
@@ -39,7 +72,7 @@ class _IntroductionScreen extends State<IntroductionScreen> {
     });
   };
 
-  var getPrefferedCameraDevice = (BuildContext context) async {
+  var getPreferredCameraDevice = (BuildContext context) async {
     var status = await Permission.camera.request();
     if (status.isDenied) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -121,8 +154,10 @@ class _IntroductionScreen extends State<IntroductionScreen> {
                     ),
                     onImageChanged: (XFile? image) {
                       setState(() {
+                        //add API Logic here and make the button load
                         profileAvatarCurrentImage = image;
                       });
+                      uploadImage(profileAvatarCurrentImage!);
                     },
                     onImageRemoved: () {
                       setState(() {
@@ -131,7 +166,7 @@ class _IntroductionScreen extends State<IntroductionScreen> {
                     },
                     getImageSource: () async => await getImageSource(context),
                     getPreferredCameraDevice: () async =>
-                        await getPrefferedCameraDevice(context),
+                        await getPreferredCameraDevice(context),
                   ),
                   const SizedBox(height: 80),
                   Form(
@@ -211,17 +246,26 @@ class _IntroductionScreen extends State<IntroductionScreen> {
                                   const EdgeInsets.symmetric(vertical: 16.0),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  // Validate will return true if the form is valid, or false if
-                                  // the form is invalid.
+                                  addProfile();
                                   if (_formKey.currentState!.validate()) {
                                     _formKey.currentState?.save();
-
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const HomeScreen()),
-                                    );
+                                    if (statusCode == 202) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                            const HomeScreen()),
+                                      );
+                                    } else {
+                                      const snackBar = SnackBar(
+                                        content: Text("An error has occurred. Please try again",
+                                            style: TextStyle(
+                                                color: Colors.red,
+                                                fontWeight: FontWeight.bold)),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    }
                                   }
                                 },
                                 child: const Text('Next'),

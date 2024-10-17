@@ -1,31 +1,26 @@
-import 'package:uuid/uuid.dart';
 
 class User {
   String userId;
-  String username;
   String email;
-  String password;
+  String? password;
 
   User({
     required this.userId,
     required this.email,
-    required this.username,
-    required this.password,
+    this.password,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
+    print(json);
     return User(
-      userId: json['userId'],
-      username: json['username'],
+      userId: json['id'],
       email: json['email'],
-      password: json['password'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,
-      'username': username,
       'email': email,
       'password': password,
     };
