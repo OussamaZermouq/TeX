@@ -2,7 +2,7 @@ import 'package:tex/app/data/model/Profile.dart';
 import 'package:tex/app/data/provider/profile_api.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-class ProfileSerivce {
+class ProfileService {
   final _api = ProfileApi();
   Future<int> createProfile(
       firstName, lastName, age, bio, imageURI, userId) async {
@@ -12,7 +12,8 @@ class ProfileSerivce {
         age: age,
         bio: bio,
         imageURI: imageURI,
-        userId: userId);
+        userId: userId
+    );
   }
 
   Future<Profile?> getProfileByUsername(username) async{
@@ -22,5 +23,4 @@ class ProfileSerivce {
     }
     return null;
   }
-
 }

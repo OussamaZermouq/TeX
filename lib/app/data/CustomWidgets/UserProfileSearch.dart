@@ -1,16 +1,23 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import '../model/Profile.dart';
 
-class UserProfileSearch extends StatelessWidget{
+class UserProfileSearch extends StatefulWidget {
   Profile? profile;
   UserProfileSearch({super.key, this.profile});
+  @override
+  _UserProfileSearch createState() => _UserProfileSearch();
+}
 
+class _UserProfileSearch extends State<UserProfileSearch>{
   @override
   Widget build(BuildContext context) {
-    if (profile!=null){
+    print(widget.profile);
+
+    if (widget.profile!=null){
       return Container(
           height: 55.0,
           alignment: Alignment.centerLeft,
@@ -18,23 +25,26 @@ class UserProfileSearch extends StatelessWidget{
             children: <Widget>[
               Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(30.0),
-                    child: const Image(
-                        image: AssetImage(
-                            'assets/images/userimage.jpg')
+                  child: CircleAvatar(
+                    child: ClipOval(
+                      child: Image.network(
+                        widget.profile!.imageURI,
+                        fit: BoxFit.cover,
+                        height: 100,
+                        width: 100,
+                      ),
                     ),
-                  )
+                  ),
               ),
-              Text(profile!.username),
-              ElevatedButton(onPressed: (){}, child: const Text("Add Contact"))
+              Text(widget.profile!.username),
+              TextButton(onPressed: (){}, child: const Icon(LucideIcons.plus))
             ],
           ));
     }
     else{
-      return Row(children: [const Text("no user was found with this username")],);
+      return const Row(children: [Text("no user was found with this username")],);
     }
-    
+
   }
 
 }

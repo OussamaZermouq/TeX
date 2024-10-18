@@ -40,7 +40,7 @@ class _IntroductionScreen extends State<IntroductionScreen> {
   }
   int? statusCode;
   Future<void> addProfile() async {
-    final profileService = ProfileSerivce();
+    final profileService = ProfileService();
     final prefs = await SharedPreferences.getInstance();
     int? _statusCode = await profileService.createProfile(firstName,lastName, age, bio, imageUrl, prefs.getString('userId'));
     setState(() {
