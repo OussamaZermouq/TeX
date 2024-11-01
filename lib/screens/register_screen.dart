@@ -13,7 +13,6 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegistrationForm extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String? username;
   String? email;
   String? password;
   String? passwordConf;
@@ -21,15 +20,31 @@ class _RegistrationForm extends State<RegisterScreen> {
   String? userId;
 
   Future<void> addUser() async {
-    const uuid = Uuid();
     final userService = UserService();
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      const uuid = Uuid();
-      userId = uuid.v6();
-    });
-    await prefs.setString('userId', userId!.toString());
-    statusCode = await userService.createUser(userId, username, email, password);
+    const uuid = Uuid();
+    userId = uuid.v6();
+    final statusCode_ = await userService.createUser(userId, email, password);
+
+    if (statusCode_ == 200) {
+      await prefs.setString('userId', userId!.toString());
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+            const IntroductionScreen()),
+      );
+    } else {
+      const snackBar = SnackBar(
+        content: Text("An error has occurred. Please try again",
+            style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold)),
+      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(snackBar);
+    }
   }
 
   @override
@@ -52,20 +67,7 @@ class _RegistrationForm extends State<RegisterScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                hintText: 'Enter your username',
-                              ),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) {
-                                username = value.toString();
-                              },
-                            ),
+
                             TextFormField(
                               decoration: const InputDecoration(
                                 hintText: 'Enter your email',
@@ -122,7 +124,7 @@ class _RegistrationForm extends State<RegisterScreen> {
                                     _formKey.currentState?.save();
                                     if (password != passwordConf) {
                                       const snackBar = SnackBar(
-                                        content: Text("Password don't match",
+                                        content: Text("Passwords don't match",
                                             style: TextStyle(
                                                 color: Colors.red,
                                                 fontWeight: FontWeight.bold)),
@@ -130,24 +132,7 @@ class _RegistrationForm extends State<RegisterScreen> {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(snackBar);
                                     } else {
-                                      addUser();
-                                      if (statusCode == 202) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const IntroductionScreen()),
-                                        );
-                                      } else {
-                                        const snackBar = SnackBar(
-                                          content: Text("An error has occurred. Please try again",
-                                              style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontWeight: FontWeight.bold)),
-                                        );
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                      }
+                                        addUser();
                                     }
                                   }
                                 },

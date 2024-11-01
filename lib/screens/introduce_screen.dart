@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_input/image_input.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tex/app/data/service/profile_serivce.dart';
+import 'package:tex/app/data/service/user_service.dart';
 import 'package:tex/screens/home_screen.dart';
 import 'package:http/http.dart' as http;
 
@@ -40,12 +40,26 @@ class _IntroductionScreen extends State<IntroductionScreen> {
   }
   int? statusCode;
   Future<void> addProfile() async {
-    final profileService = ProfileService();
-    final prefs = await SharedPreferences.getInstance();
-    int? _statusCode = await profileService.createProfile(firstName,lastName, age, bio, imageUrl, prefs.getString('userId'));
-    setState(() {
-      statusCode =_statusCode;
-    });
+    final userService = UserService();
+    int? statusCode = await userService.linkProfile(firstName,lastName, username,age, bio, imageUrl);
+    print(statusCode);
+    if (statusCode == 200) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+            const HomeScreen()),
+      );
+    } else {
+      const snackBar = SnackBar(
+        content: Text("An error has occurred. Please try again",
+            style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold)),
+      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(snackBar);
+    }
   }
   var getImageSource = (BuildContext context) {
     return showDialog<ImageSource>(
@@ -112,6 +126,8 @@ class _IntroductionScreen extends State<IntroductionScreen> {
   String? lastName;
   int? age;
   String? bio;
+  String? username;
+
 
   @override
   Widget build(BuildContext context) {
@@ -207,6 +223,20 @@ class _IntroductionScreen extends State<IntroductionScreen> {
                             ),
                             TextFormField(
                               decoration: const InputDecoration(
+                                hintText: 'Enter your username',
+                              ),
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                username = value.toString();
+                              },
+                            ),
+                            TextFormField(
+                              decoration: const InputDecoration(
                                 hintText: 'Enter your age',
                               ),
                               keyboardType: TextInputType.number,
@@ -249,23 +279,6 @@ class _IntroductionScreen extends State<IntroductionScreen> {
                                   addProfile();
                                   if (_formKey.currentState!.validate()) {
                                     _formKey.currentState?.save();
-                                    if (statusCode == 202) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                            const HomeScreen()),
-                                      );
-                                    } else {
-                                      const snackBar = SnackBar(
-                                        content: Text("An error has occurred. Please try again",
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontWeight: FontWeight.bold)),
-                                      );
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(snackBar);
-                                    }
                                   }
                                 },
                                 child: const Text('Next'),

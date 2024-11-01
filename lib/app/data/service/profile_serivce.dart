@@ -4,17 +4,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 class ProfileService {
   final _api = ProfileApi();
-  Future<int> createProfile(
-      firstName, lastName, age, bio, imageURI, userId) async {
-    return _api.createProfile(
-        firstName: firstName,
-        lastName: lastName,
-        age: age,
-        bio: bio,
-        imageURI: imageURI,
-        userId: userId
-    );
-  }
 
   Future<Profile?> getProfileByUsername(username) async{
     http.Response response = await _api.getProfileUserByUsername(username: username);
@@ -22,5 +11,10 @@ class ProfileService {
       return Profile.fromJson(jsonDecode(response.body));
     }
     return null;
+  }
+
+  Future<int> addContact(profileId) async{
+    http.Response response = await _api.addContact(profileId:profileId);
+    return response.statusCode;
   }
 }

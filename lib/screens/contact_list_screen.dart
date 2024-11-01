@@ -13,10 +13,11 @@ class ContactListScreen extends StatefulWidget {
 class _ContactListScreen extends State<ContactListScreen> {
   Profile? userProfile;
   final TextEditingController _usernameController = TextEditingController();
+  final profileService = ProfileService();
 
   Future<void> findContact(String username) async {
-    final profileService = ProfileService();
     Profile? profile = await profileService.getProfileByUsername(username);
+
     setState(() {
       userProfile = profile;
     });
@@ -53,17 +54,20 @@ class _ContactListScreen extends State<ContactListScreen> {
                             border: UnderlineInputBorder(),
                             labelText: "Search by username",
                           ),
+                          onChanged: (username) async {
+                            if (username.isNotEmpty) {
+                              try {
+                                await findContact(username);
+                                setModalState(() {});
+                              } catch (error) {
+                                print("ERROR");
+                                print(error);
+                              }
+                            }
+                          },
                         ),
                         const SizedBox(height: 16),
                         UserProfileSearch(profile: userProfile),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final username = _usernameController.text;
-                            await findContact(username);
-                            setModalState(() {}); // Updates the modal's state
-                          },
-                          child: const Text("Search"),
-                        ),
                       ],
                     ),
                   );

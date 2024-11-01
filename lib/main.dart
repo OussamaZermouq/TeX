@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tex/app/data/service/profile_serivce.dart';
 import 'package:tex/screens/home_screen.dart';
 import 'package:tex/screens/introduce_screen.dart';
+import 'package:tex/screens/screens.dart';
 import 'package:tex/screens/welcome_screen.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,13 +13,6 @@ void main() {
 
 class TeXApp extends StatelessWidget {
   const TeXApp({super.key});
-
-  //for testing purposes
-  Future<void> setPrefs() async{
-    final refs = await SharedPreferences.getInstance();
-    //for testing remove later
-    refs.setString('userId', "1ef88e85-a07b-6720-acdd-b77ec5e6171a");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +25,7 @@ class TeXApp extends StatelessWidget {
         fontFamily: 'SFPro',
       ),
       routes: {
-        '/welcome': (context) => const HomeScreen(),
+        '/welcome': (context) => const RegisterScreen(),
       },
       initialRoute: '/welcome',
     );

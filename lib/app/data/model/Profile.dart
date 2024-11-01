@@ -8,7 +8,6 @@ class Profile {
   String bio;
   String imageURI;
   String username;
-  User user;
 
   Profile({
     required this.profileId,
@@ -18,7 +17,6 @@ class Profile {
     required this.bio,
     required this.imageURI,
     required this.username,
-    required this.user,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -29,8 +27,7 @@ class Profile {
         username: json['username'],
         age: json['age'],
         bio: json['bio'],
-        imageURI: json['imageURI'],
-        user: User.fromJson(json['user']));
+        imageURI: json['imageURI']);
   }
 
   Map<String, dynamic> toJson() {
@@ -42,7 +39,6 @@ class Profile {
       'age': age,
       'bio': bio,
       'imageURI': imageURI,
-      'user': user.toJson(),
     };
   }
 

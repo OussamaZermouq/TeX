@@ -183,15 +183,6 @@ class _HomeScreen extends State<HomeScreen>
                 );
               },
             ),
-            // Floating action menu item
-            BubbleMenu(
-              title: 'Chat',
-              iconColor: Colors.white,
-              bubbleColor: Colors.blue,
-              icon: Icons.people,
-              style: const TextStyle(fontSize: 16, color: Colors.white),
-              onPressed: () {},
-            ),
             //Floating action menu item
             BubbleMenu(
               title: 'Group',
@@ -215,7 +206,6 @@ class _HomeScreen extends State<HomeScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  // Different Padding For All Sides
                   padding: const EdgeInsets.all(10),
                   child: Container(
                     height: 60.0,
