@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:tex/app/data/model/User.dart';
+
+//i probably should move this to a helper class instead of keeping it here :|
+List<Profile> profilesFromJson(String profileList) => List<Profile>.from(jsonDecode(profileList).map((profile)=>Profile.fromJson(profile)));
+
 
 class Profile {
   String profileId;
   String firstName;
   String lastName;
   int age;
-  String bio;
+  String? bio;
   String imageURI;
   String username;
 
@@ -14,7 +20,7 @@ class Profile {
     required this.firstName,
     required this.lastName,
     required this.age,
-    required this.bio,
+    this.bio,
     required this.imageURI,
     required this.username,
   });

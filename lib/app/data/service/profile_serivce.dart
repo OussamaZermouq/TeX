@@ -7,6 +7,7 @@ class ProfileService {
 
   Future<Profile?> getProfileByUsername(username) async{
     http.Response response = await _api.getProfileUserByUsername(username: username);
+    print(response.body);
     if (response.statusCode==200){
       return Profile.fromJson(jsonDecode(response.body));
     }
