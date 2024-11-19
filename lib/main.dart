@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tex/app/data/service/profile_serivce.dart';
+import 'package:tex/screens/chat_screen.dart';
 import 'package:tex/screens/home_screen.dart';
 import 'package:tex/screens/introduce_screen.dart';
 import 'package:tex/screens/login_screen.dart';
@@ -21,12 +22,14 @@ class TeXApp extends StatelessWidget {
       title: 'TeX App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0x00FFFFFF)),
-        useMaterial3: true,
-        fontFamily: 'SFPro',
+        brightness: Brightness.light,
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+      ),
+      themeMode: ThemeMode.dark,
       routes: {
-        '/welcome': (context) => const LoginScreen(),
+        '/welcome': (context) => const ChatScreen(),
       },
       initialRoute: '/welcome',
     );

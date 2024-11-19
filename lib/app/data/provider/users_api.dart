@@ -42,6 +42,7 @@ class UsersApi {
       'Content-Type': 'application/json',
       'Authorization':'Bearer ${authToken!}',
     };
+
     final response = await http.get(
       Uri.parse("$_baseUrlUser/contacts"),
       headers: headers,

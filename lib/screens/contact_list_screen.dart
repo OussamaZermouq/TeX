@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tex/app/data/CustomWidgets/ContactProfile.dart';
 import 'package:tex/app/data/CustomWidgets/UserProfileSearch.dart';
 import 'package:tex/app/data/model/Profile.dart';
+import 'package:tex/app/data/service/chat_service.dart';
 import 'package:tex/app/data/service/profile_serivce.dart';
 import 'package:tex/app/data/service/user_service.dart';
+import 'package:tex/screens/home_screen.dart';
 
 class ContactListScreen extends StatefulWidget {
   const ContactListScreen({super.key});
@@ -19,6 +21,7 @@ class _ContactListScreen extends State<ContactListScreen> {
   List<Profile>? contacts;
   final profileService = ProfileService();
   final userService = UserService();
+  final chatService = ChatService();
 
   @override
   void initState() {
@@ -39,6 +42,23 @@ class _ContactListScreen extends State<ContactListScreen> {
     setState(() {
       userProfile = profile;
     });
+  }
+  void createChatClick(String profileToAdd) async{
+    int statusCode = await chatService.createChat(profileToAdd);
+    if (statusCode != 200){
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    }
+    else{
+      const snackBar = SnackBar(
+        content: Text("An error has occurred please try later.",
+            style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold)),
+      );
+    }
   }
 
   @override
@@ -113,7 +133,9 @@ class _ContactListScreen extends State<ContactListScreen> {
                             : const Text("Hey I'm using TeX!", style: TextStyle(fontStyle: FontStyle.italic),),
                         trailing: IconButton(
                           icon: const Icon(Icons.message),
-                          onPressed: (){},
+                          onPressed: (){
+                            createChatClick(contacts?[index].profileId as String);
+                          },
                         ),
                       ),
                   );

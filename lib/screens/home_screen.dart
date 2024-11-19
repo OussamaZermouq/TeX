@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:floating_action_bubble_custom/floating_action_bubble_custom.dart';
+import 'package:tex/app/data/CustomWidgets/ChatWidget.dart';
+import 'package:tex/app/data/model/Chat.dart';
+import 'package:tex/app/data/service/chat_service.dart';
 import 'package:tex/screens/contact_list_screen.dart';
 
 import 'introduce_screen.dart';
@@ -17,10 +20,13 @@ class _HomeScreen extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   late Animation<double> _animation;
   late AnimationController _animationController;
-
+  final chatService = ChatService();
+  List<Chat>? chats;
   @override
   void initState() {
     super.initState();
+
+    getChats();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 260),
@@ -30,6 +36,14 @@ class _HomeScreen extends State<HomeScreen>
       parent: _animationController,
     );
     _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
+
+  }
+
+  Future<List<Chat>?> getChats() async{
+    List<Chat>? chats_ = await chatService.getChats();
+    chats = chats_;
+    return chats_;
+
   }
 
   void _showDialog(BuildContext context) {
@@ -202,43 +216,28 @@ class _HomeScreen extends State<HomeScreen>
             constraints: const BoxConstraints(
               minHeight: 5.0,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Container(
-                    height: 60.0,
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(30.0),
-                              child: const Image(
-                                  image: AssetImage(
-                                      'assets/images/userimage.jpg')),
-                            )),
-                        const Column(
-                          children: <Widget>[
-                            Text(
-                              'John Doe',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              'Hello world',
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic, fontSize: 15),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            child: FutureBuilder(
+              future: getChats(),
+              builder: (context, snapshot){
+                if (snapshot.hasData){
+                  return ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: chats!.length,
+                      itemBuilder: (context, index){
+                        return ChatWidget(chat: chats![index]);
+                    }
+                  );
+                }
+                else if (snapshot.hasError){
+                  print(snapshot.error);
+                  return const Text("ERROR LOADING DATA");
+                }
+                else{
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+            )
           ),
         ));
   }
