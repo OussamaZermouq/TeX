@@ -29,7 +29,7 @@ class TeXApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.dark,
       routes: {
-        '/welcome': (context) => const ChatScreen(),
+        '/welcome': (context) => const LoginScreen(),
       },
       initialRoute: '/welcome',
     );

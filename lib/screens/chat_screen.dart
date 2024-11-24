@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:chat_bubbles/chat_bubbles.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -11,6 +13,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreen extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
+    final now = new DateTime.now();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -52,19 +55,59 @@ class _ChatScreen extends State<ChatScreen> {
           ),
         ],
       ),
-      body: const Text("data"),
-      bottomNavigationBar:  Padding(
-          padding: EdgeInsets.only(left: 5, bottom: 10, right: 5, top: 0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-              ))
-            ),
-            IconButton(onPressed: (){}, icon: Icon(Icons.send_rounded)),
-      ])),
+      body: const Stack(
+        children: [
+      SingleChildScrollView(
+      child: Column(
+      children: <Widget>[
+
+      BubbleSpecialThree(
+        text: 'bubble special three without tail',
+        color: Color(0xFF1B97F3),
+        tail: true,
+        textStyle: TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      BubbleSpecialThree(
+        text: 'bubble special three with tail',
+        color: Color(0xFF1B97F3),
+        tail: true,
+        textStyle: TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      BubbleSpecialThree(
+        text: "bubble special three without tail",
+        color: Color(0xFFE8E8EE),
+        tail: true,
+        isSender: false,
+      ),
+      BubbleSpecialThree(
+        text: "bubble special three with tail",
+        color: Color(0xFFE8E8EE),
+        tail: true,
+        isSender: false,
+      ),
+      SizedBox(
+        height: 100,
+      )
+      ],
+    ),
+    )]),
+    bottomNavigationBar: Padding(
+    padding: const EdgeInsets.only(left: 20, bottom: 10, right:20, top: 0),
+    child: Row(
+    children: [
+    Expanded(
+    child: TextField(
+    decoration: InputDecoration(
+    border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(30.0)
+    ),
+    ))
+    ),
+    IconButton(onPressed: (){}, icon: Icon(Icons.send_rounded)),
+    ]
+    )
+    )
+    ,
     );
   }
 }
