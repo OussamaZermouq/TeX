@@ -56,58 +56,60 @@ class _ChatScreen extends State<ChatScreen> {
         ],
       ),
       body: const Stack(
-        children: [
-      SingleChildScrollView(
-      child: Column(
-      children: <Widget>[
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
 
-      BubbleSpecialThree(
-        text: 'bubble special three without tail',
-        color: Color(0xFF1B97F3),
-        tail: true,
-        textStyle: TextStyle(color: Colors.white, fontSize: 16),
-      ),
-      BubbleSpecialThree(
-        text: 'bubble special three with tail',
-        color: Color(0xFF1B97F3),
-        tail: true,
-        textStyle: TextStyle(color: Colors.white, fontSize: 16),
-      ),
-      BubbleSpecialThree(
-        text: "bubble special three without tail",
-        color: Color(0xFFE8E8EE),
-        tail: true,
-        isSender: false,
-      ),
-      BubbleSpecialThree(
-        text: "bubble special three with tail",
-        color: Color(0xFFE8E8EE),
-        tail: true,
-        isSender: false,
-      ),
-      SizedBox(
-        height: 100,
+                  BubbleSpecialThree(
+                    text: 'bubble special three without tail',
+                    color: Color(0xFF1B97F3),
+                    tail: true,
+                    textStyle: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                  BubbleSpecialThree(
+                    text: 'bubble special three with tail',
+                    color: Color(0xFF1B97F3),
+                    tail: true,
+                    textStyle: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                  BubbleSpecialThree(
+                    text: "bubble special three without tail",
+                    color: Color(0xFFE8E8EE),
+                    tail: true,
+                    isSender: false,
+                  ),
+                  BubbleSpecialThree(
+                    text: "bubble special three with tail",
+                    color: Color(0xFFE8E8EE),
+                    tail: true,
+                    isSender: false,
+                  ),
+                  SizedBox(
+                    height: 100,
+                  )
+                ],
+              ),
+            )
+          ]),
+      bottomNavigationBar: Padding(
+          padding: const EdgeInsets.only(
+              left: 20, bottom: 10, right: 20, top: 0),
+          child: Row(
+              children: [
+                Expanded(
+                    child: TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0)
+                          ),
+                        ))
+                ),
+                IconButton(onPressed: () {}, icon: Icon(Icons.send_rounded)),
+              ]
+          )
       )
-      ],
-    ),
-    )]),
-    bottomNavigationBar: Padding(
-    padding: const EdgeInsets.only(left: 20, bottom: 10, right:20, top: 0),
-    child: Row(
-    children: [
-    Expanded(
-    child: TextField(
-    decoration: InputDecoration(
-    border: OutlineInputBorder(
-    borderRadius: BorderRadius.circular(30.0)
-    ),
-    ))
-    ),
-    IconButton(onPressed: (){}, icon: Icon(Icons.send_rounded)),
-    ]
-    )
-    )
-    ,
+      ,
     );
   }
 }

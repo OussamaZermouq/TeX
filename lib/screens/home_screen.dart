@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:floating_action_bubble_custom/floating_action_bubble_custom.dart';
@@ -5,7 +7,7 @@ import 'package:tex/app/data/CustomWidgets/ChatWidget.dart';
 import 'package:tex/app/data/model/Chat.dart';
 import 'package:tex/app/data/service/chat_service.dart';
 import 'package:tex/screens/contact_list_screen.dart';
-
+import 'package:stomp_dart_client/stomp_dart_client.dart';
 import 'introduce_screen.dart';
 
 
@@ -21,12 +23,14 @@ class _HomeScreen extends State<HomeScreen>
   late Animation<double> _animation;
   late AnimationController _animationController;
   final chatService = ChatService();
+  late StompClient client;
+  late bool loadingChats;
+  bool _chatsInitialized = false;
   List<Chat>? chats;
   @override
   void initState() {
     super.initState();
 
-    getChats();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 260),
@@ -37,14 +41,60 @@ class _HomeScreen extends State<HomeScreen>
     );
     _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
 
+
+    if(!_chatsInitialized){
+      initChats().then((_){
+        _chatsInitialized = true;
+      });
+
+    }
+
   }
 
-  Future<List<Chat>?> getChats() async{
+  void initWebSocket(){
+    StompClient client_ = StompClient(
+        config: StompConfig(
+            url: 'ws://localhost:8080/tex-ws',
+            onConnect: onConnectCallback,
+            onStompError:onStompErrorCallback,
+            stompConnectHeaders: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyYWNjb3VudEBnbWFpbC5jb20iLCJpYXQiOjE3MzI1NDU0MzMsImV4cCI6MTczMzE1MDIzM30.HgBZdLxLDw6rrOlHZ9y2B5IwRVr7F7XFOv92kymG59Q>'},
+            webSocketConnectHeaders: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyYWNjb3VudEBnbWFpbC5jb20iLCJpYXQiOjE3MzI1NDU0MzMsImV4cCI6MTczMzE1MDIzM30.HgBZdLxLDw6rrOlHZ9y2B5IwRVr7F7XFOv92kymG59Q'},
+            onWebSocketError: (error) => print('WebSocket error: $error'),
+            onDisconnect: (frame) => print('Disconnected: $frame'),
+            onDebugMessage: (message) => print('Debug: $message'),
+        )
+    );
+    client_.activate();
+
+  }
+
+  void onStompErrorCallback(StompFrame connectFrame) {
+    print("WEBSOCKET ERROR");
+
+  }
+  void onConnectCallback(StompFrame connectFrame) {
+    print("WEBSOCKET CONNECTED");
+    if (chats != null){
+      for (Chat chat in chats!) {
+        client.subscribe(
+          destination: '/topic/chat/${chat.chatId}',
+          callback: (StompFrame frame) {
+            print('Message from $chat.chatId: ${frame.body}');
+          },
+        );
+      }
+    }
+  }
+
+  Future<List<Chat>?> initChats() async{
+    loadingChats = true;
     List<Chat>? chats_ = await chatService.getChats();
     chats = chats_;
+    initWebSocket();
     return chats_;
 
   }
+
 
   void _showDialog(BuildContext context) {
     showDialog(
@@ -217,7 +267,7 @@ class _HomeScreen extends State<HomeScreen>
               minHeight: 5.0,
             ),
             child: FutureBuilder(
-              future: getChats(),
+              future: initChats(),
               builder: (context, snapshot){
                 if (snapshot.hasData){
                   return ListView.builder(
@@ -231,7 +281,12 @@ class _HomeScreen extends State<HomeScreen>
                 }
                 else if (snapshot.hasError){
                   print(snapshot.error);
-                  return const Text("ERROR LOADING DATA");
+                  return const Center(
+                    child: Text("ERROR LOADING DATA",
+                    textAlign: TextAlign.center,
+                    ),
+
+                  );
                 }
                 else{
                   return const Center(child: CircularProgressIndicator());
@@ -241,4 +296,5 @@ class _HomeScreen extends State<HomeScreen>
           ),
         ));
   }
+
 }
