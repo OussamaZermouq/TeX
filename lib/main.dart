@@ -9,6 +9,8 @@ import 'package:tex/screens/screens.dart';
 import 'package:tex/screens/welcome_screen.dart';
 import 'package:http/http.dart' as http;
 
+import 'screens/test_screen.dart';
+
 void main() {
   runApp(const TeXApp());
 }
@@ -29,7 +31,7 @@ class TeXApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.dark,
       routes: {
-        '/welcome': (context) => const HomeScreen(),
+        '/welcome': (context) => LoginScreen(),
       },
       initialRoute: '/welcome',
     );

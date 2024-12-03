@@ -57,8 +57,8 @@ class _HomeScreen extends State<HomeScreen>
             url: 'ws://localhost:8080/tex-ws',
             onConnect: onConnectCallback,
             onStompError:onStompErrorCallback,
-            stompConnectHeaders: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyYWNjb3VudEBnbWFpbC5jb20iLCJpYXQiOjE3MzI1NDU0MzMsImV4cCI6MTczMzE1MDIzM30.HgBZdLxLDw6rrOlHZ9y2B5IwRVr7F7XFOv92kymG59Q>'},
-            webSocketConnectHeaders: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyYWNjb3VudEBnbWFpbC5jb20iLCJpYXQiOjE3MzI1NDU0MzMsImV4cCI6MTczMzE1MDIzM30.HgBZdLxLDw6rrOlHZ9y2B5IwRVr7F7XFOv92kymG59Q'},
+            stompConnectHeaders: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyYWNjb3VudEBnbWFpbC5jb20iLCJpYXQiOjE3MzMxNjc0NDYsImV4cCI6MTczMzc3MjI0Nn0.z4VEjdBwvDOVWk7A5bCaBteeIi6ceFVhoh4fV_mkNcc'},
+            webSocketConnectHeaders: {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyYWNjb3VudEBnbWFpbC5jb20iLCJpYXQiOjE3MzMxNjc0NDYsImV4cCI6MTczMzc3MjI0Nn0.z4VEjdBwvDOVWk7A5bCaBteeIi6ceFVhoh4fV_mkNcc'},
             onWebSocketError: (error) => print('WebSocket error: $error'),
             onDisconnect: (frame) => print('Disconnected: $frame'),
             onDebugMessage: (message) => print('Debug: $message'),
@@ -66,6 +66,7 @@ class _HomeScreen extends State<HomeScreen>
     );
     client_.activate();
 
+    client = client_;
   }
 
   void onStompErrorCallback(StompFrame connectFrame) {
@@ -76,15 +77,21 @@ class _HomeScreen extends State<HomeScreen>
     print("WEBSOCKET CONNECTED");
     if (chats != null){
       for (Chat chat in chats!) {
+        print(chat.chatId);
         client.subscribe(
           destination: '/topic/chat/${chat.chatId}',
           callback: (StompFrame frame) {
-            print('Message from $chat.chatId: ${frame.body}');
           },
         );
       }
     }
+    client.send(
+      destination: '/topic/chat/',
+      body: "THIS IS A TEST"
+
+    );
   }
+
 
   Future<List<Chat>?> initChats() async{
     loadingChats = true;
@@ -275,14 +282,14 @@ class _HomeScreen extends State<HomeScreen>
                       shrinkWrap: true,
                       itemCount: chats!.length,
                       itemBuilder: (context, index){
-                        return ChatWidget(chat: chats![index]);
+                        return ChatWidget(chat: chats![index], client: client,);
                     }
                   );
                 }
                 else if (snapshot.hasError){
                   print(snapshot.error);
                   return const Center(
-                    child: Text("ERROR LOADING DATA",
+                    child: Text("Error loading chats, please check your internet",
                     textAlign: TextAlign.center,
                     ),
 

@@ -26,7 +26,7 @@ class Chat {
         : [];
 
     return Chat(
-      chatId: json['chatUUID'],
+      chatId: json['chatId'],
       members: members,
       messages: messages,
     );

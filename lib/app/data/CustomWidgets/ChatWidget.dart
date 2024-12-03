@@ -1,20 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:stomp_dart_client/stomp_dart_client.dart';
+import 'package:tex/screens/chat_screen.dart';
 
 import '../model/Chat.dart';
 import '../model/Profile.dart';
 
 class ChatWidget extends StatefulWidget {
   Chat? chat;
-
-  ChatWidget({super.key, this.chat});
+  StompClient client;
+  ChatWidget({super.key, this.chat, required this.client});
 
   @override
   _ChatWidget createState() => _ChatWidget();
 }
 
 class _ChatWidget extends State<ChatWidget> {
-  void enterChat() {}
+  void enterChat() {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+          ChatScreen(stompClient: widget.client)),
+    );
+  }
 
   @override
   void initState(){
@@ -27,7 +37,7 @@ class _ChatWidget extends State<ChatWidget> {
         padding: const EdgeInsets.all(10),
         child: GestureDetector(
           onTap: () {
-
+              enterChat();
             },
           child: Container(
             height: 60.0,
@@ -52,7 +62,7 @@ class _ChatWidget extends State<ChatWidget> {
                       widget.chat!.members[0].username,
                       style: TextStyle(fontSize: 20),
                     ),
-                    Text(
+                    const Text(
                       'Tap to chat',
                       style:
                           TextStyle(fontStyle: FontStyle.italic, fontSize: 15),
