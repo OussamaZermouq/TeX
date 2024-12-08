@@ -39,14 +39,12 @@ class ProfileApi {
       "profileID": profileId
     };
 
-    print("$_baseUrl/addContact?userId=$userId");
 
     final response = await http.post(
       Uri.parse("$_baseUrl/addContact?userId=$userId"),
       headers: headers,
       body: jsonEncode(body),  // Encode body to JSON
     );
-
     return response;
   }
 

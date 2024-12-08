@@ -43,4 +43,17 @@ class ChatApi{
     );
     return response;
   }
+
+
+  Future<http.Response> getChatById(String chatId) async{
+    final String? authToken = await secureStorage.read(key: "token");
+    final headers = {
+      'Authorization' : 'Bearer ${authToken!}',
+    };
+    final response = await http.get(
+      Uri.parse("$_baseUrl/$chatId"),
+      headers: headers,
+    );
+    return response;
+  }
 }

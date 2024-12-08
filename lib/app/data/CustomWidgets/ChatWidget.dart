@@ -22,7 +22,8 @@ class _ChatWidget extends State<ChatWidget> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-          ChatScreen(stompClient: widget.client)),
+          ChatScreen(stompClient: widget.client, chatId: widget.chat!.chatId)
+      ),
     );
   }
 

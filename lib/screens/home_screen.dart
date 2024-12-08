@@ -30,7 +30,6 @@ class _HomeScreen extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 260),
@@ -40,15 +39,11 @@ class _HomeScreen extends State<HomeScreen>
       parent: _animationController,
     );
     _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
-
-
     if(!_chatsInitialized){
       initChats().then((_){
         _chatsInitialized = true;
       });
-
     }
-
   }
 
   void initWebSocket(){
@@ -65,7 +60,6 @@ class _HomeScreen extends State<HomeScreen>
         )
     );
     client_.activate();
-
     client = client_;
   }
 
@@ -77,7 +71,6 @@ class _HomeScreen extends State<HomeScreen>
     print("WEBSOCKET CONNECTED");
     if (chats != null){
       for (Chat chat in chats!) {
-        print(chat.chatId);
         client.subscribe(
           destination: '/topic/chat/${chat.chatId}',
           callback: (StompFrame frame) {
@@ -85,14 +78,8 @@ class _HomeScreen extends State<HomeScreen>
         );
       }
     }
-    client.send(
-      destination: '/topic/chat/',
-      body: "THIS IS A TEST"
 
-    );
   }
-
-
   Future<List<Chat>?> initChats() async{
     loadingChats = true;
     List<Chat>? chats_ = await chatService.getChats();
@@ -101,7 +88,6 @@ class _HomeScreen extends State<HomeScreen>
     return chats_;
 
   }
-
 
   void _showDialog(BuildContext context) {
     showDialog(
@@ -301,7 +287,7 @@ class _HomeScreen extends State<HomeScreen>
               },
             )
           ),
-        ));
+        )
+    );
   }
-
 }

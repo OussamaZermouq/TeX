@@ -17,11 +17,8 @@ class Chat {
   });
 
   factory Chat.fromJson(Map<String, dynamic> json) {
-    // Deserialize members
     List<Profile> members = List<Profile>.from(json['members'].map((member) => Profile.fromJson(member)));
-
-    // Deserialize messages if they exist
-    List<Message>? messages = json['messages'] != null
+    List<Message>? messages = json['messages'][0] != null
         ? List<Message>.from(json['messages'].map((message) => Message.fromJson(message)))
         : [];
 
